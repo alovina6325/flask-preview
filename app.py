@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request
+# app.py
+from flask import Flask, request, render_template, send_from_directory
+from demucs_utils import demucs_split
 import os
 import uuid
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
 def index():
@@ -12,16 +12,24 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    if 'music' not in request.files:
-        return "음악 파일이 없습니다."
-
     file = request.files['music']
-    if file.filename == '':
-        return "선택된 파일이 없습니다."
+    if not file:
+        return "파일이 없습니다.", 400
 
-    # 저장
-    filename = str(uuid.uuid4()) + "_" + file.filename
-    save_path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(save_path)
+    filename = file.filename
+    track_id = str(uuid.uuid4())
+    upload_dir = os.path.join('static/uploads', track_id)
+    os.makedirs(upload_dir, exist_ok=True)
 
-    return f"✅ 업로드 성공: {filename}"
+    input_path = os.path.join(upload_dir, filename)
+    file.save(input_path)
+
+    stem_folder, stems = demucs_split(input_path)
+
+    if not stem_folder:
+        return "Demucs 분리 실패", 500
+
+    return render_template('stems.html',
+                           stems=stems,
+                           stem_folder_name=os.path.basename(stem_folder),
+                           track_id=track_id)

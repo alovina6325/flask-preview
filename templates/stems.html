@@ -1,0 +1,13 @@
+{% for stem in stems %}
+    <div class="stem-box">
+        <h3>{{ stem }}</h3>
+        <audio controls>
+            <source src="{{ url_for('static', filename='results/htdemucs/' + stem_folder_name + '/' + stem) }}" type="audio/wav">
+        </audio>
+        <a class="download-btn"
+           href="{{ url_for('static', filename='results/htdemucs/' + stem_folder_name + '/' + stem) }}"
+           download="{{ stem }}">
+           ⬇️ 다운로드
+        </a>
+    </div>
+{% endfor %}
