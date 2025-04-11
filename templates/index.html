@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>Flask Preview Service</title>
+  <meta charset="UTF-8">
+  <title>음원 업로드</title>
 </head>
 <body>
-    <h1>🎵 Welcome to the Music Preview Service</h1>
-    <p>This is your Flask web UI deployed on Render.</p>
+  <h1>🎵 음원 업로드</h1>
+
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <label for="music">음악 파일 선택 (mp3/wav):</label>
+    <input type="file" name="music" id="music" accept=".mp3,.wav" required>
+    <br><br>
+    <button type="submit">업로드 및 분석</button>
+  </form>
 </body>
 </html>
